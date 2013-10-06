@@ -1,0 +1,44 @@
+import dataextract as tde
+import os, datetime
+import gspread
+
+#Step 1: Create the extract file
+try:
+    tdefile = tde.Extract('SuperStoreExtract.tde')
+except:
+    os.remove('SuperStoreExtract.tde')
+    tdefile = tde.Extract('SuperStoreExtract.tde')
+
+#Step 2: Connect to the Google Spreadsheet and put the data in a list of list
+gsclient = gspread.login('##UserName##','##Password##')
+spreadsheet = gsclient.open_by_key('##########') #Copy url from just after "key=" to the "#"
+worksheet = spreadsheet.get_worksheet(0)
+data = worksheet.get_all_values()
+
+#Step 3: Create the table definition
+tableDef = tde.TableDefinition()
+tableDef.addColumn('Row ID', tde.Type.CHAR_STRING)
+tableDef.addColumn('Order Date', tde.Type.DATE)
+tableDef.addColumn('Sales', tde.Type.DOUBLE)
+tableDef.addColumn('Profit', tde.Type.DOUBLE)
+tableDef.addColumn('Customer Name', tde.Type.CHAR_STRING)
+tableDef.addColumn('Zip Code', tde.Type.INTEGER)
+tableDef.addColumn('Product Category', tde.Type.CHAR_STRING)
+table = tdefile.addTable('Extract', tableDef)
+
+#Step 4: Loop through our list of lists of data.
+# put it into rows, and inser into table
+newrow = tde.Row(tableDef)
+for row in data[1:]:
+    newrow.setCharString(0, str(row[0]))
+    date = datetime.datetime.strptime(row[1], "%m/%d/%Y")
+    newrow.setDate(1, date.year, date.month, date.day)
+    newrow.setDouble(2,float(row[2]))
+    newrow.setDouble(3,float(row[3]))
+    newrow.setCharString(4, str(row[4]))
+    newrow.setInteger(5,int(row[5]))
+    newrow.setCharString(6, str(row[6]))
+    table.insert(newrow)
+
+#Step 5: Close the tde file
+tdefile.close()

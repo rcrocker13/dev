@@ -1,0 +1,28 @@
+import dataextract as tde
+import os
+
+#Step 1: Create the extract file
+try:
+    tdefile = tde.Extract('TrivialExample.tde')
+except:
+    os.remove('TrivialExample.tde')
+    tdefile = tde.Extract('TrivialExample.tde')
+
+#Step 2: Create the table definition
+tableDef = tde.TableDefinition()
+tableDef.addColumn('rowId', tde.Type.CHAR_STRING)
+tableDef.addColumn('value',tde.Type.DOUBLE)
+
+#Step 3: Create the table in the image of the table definition
+table = tdefile.addTable('Extract',tableDef)
+
+#Step 4: Create some rows and insert them into the table
+newrow = tde.Row(tableDef)
+for i in range(1,101):
+    newrow.setCharString(0,' Row ' + str(i))
+    newrow.setDouble(1, i)
+    table.insert(newrow)
+
+
+#Step 5: Close the tde
+tdefile.close()

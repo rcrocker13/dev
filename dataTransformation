@@ -1,0 +1,37 @@
+import csv, os, datetime
+
+#Step 1: Create the Extract File and opne the .csv
+try:
+    tdefile = tde.Extract('FruitSales.tde')
+except:
+    os.remove('FruitSales.tde')
+    tdefile = tde.Extract('FruitSales.tde')
+
+csvReader = csv.reader(open('FruitSales.csv','rb'), delimiter=',', quotechar='"')
+
+#Step 2: Create the tableDef
+tableDef = tde.TableDefinition()
+tableDef.addColumn('Date', tde.Type.DATE)
+tableDef.addColumn('Fruit Type', tde.Type.CHAR_STRING)
+tableDef.addColumn('Sales', tde.Type.INTEGER)
+
+#Step 3: Create the table in the image of the tableDef
+table = tdefile.addTable('Extract', tableDef)
+
+#Step 4: Loop through the csv, for each row create two new rows,
+# put the data into those rows and insert into the table
+newrow = tde.Row(tableDef)
+csvReader.next() #Skip the first line since if has the header
+for line in csvReader:
+    date = datetime.datetime.strptime(line[0], '%m/%d/%Y')
+    newrow.setDate(0, date.year, date.month, date.day)
+    newrow.setCharString(1, 'Apples')
+    newrow.setInteger(2,int(line[1]))
+    table.insert(newrow)
+    newrow.setDate(0, date.year, date.month, date.day)
+    newrow.setCharString(1, 'Orange')
+    newrow.setInteger(2,int(line[2]))
+    table.insert(newrow)
+
+#Step 5: Close the file
+tdefile.close()

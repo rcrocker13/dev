@@ -1,0 +1,28 @@
+userInput = raw_input('Please think of a number between 0 and 100! ')
+guess = 100 / 2
+upper = 101
+lower = -1
+guessCheck = ''
+
+while guessCheck != 'c':
+    
+    guessCheck = raw_input('Is your secret number ' + str(guess) + '?' +
+    """
+    Enter 'h' to indicate the guess is too high.
+    Enter 'l' to indicate the guess is too low.
+    Enter 'c' to indicate I guessed correctly.
+    Were we h, l or c: """)
+    
+    if guessCheck == 'c':
+        print('Game over! Your secret number was: ' + str(guess))
+        break
+    # Adjust the lower bound and guess again
+    elif guessCheck == 'l':
+        lower = guess
+        guess += abs((upper - guess) / 2)
+    # Adjust the upper bound and guess again
+    elif guessCheck == 'h':
+        upper = guess
+        guess -= abs((guess - lower) / 2)
+    else:
+        print("We couldn't understand your input. Try again :)")

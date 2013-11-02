@@ -1,0 +1,13 @@
+def square(x):
+    '''
+    x: int or float.
+    '''
+    return x*x
+
+def fourthPower(num):
+    '''
+    num: int or float
+    procedure: Your argument will be
+    raised to the fourth power.
+    '''
+    return square(num) * square(num)
